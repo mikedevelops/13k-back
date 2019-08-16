@@ -1,0 +1,26 @@
+{
+  "name": "13k",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf dist/bundled && parcel build src/index.html -d dist/bundled --no-source-maps",
+    "watch": "nodemon --watch src --exec \"npm run build\"",
+    "start": "parcel src/index.html",
+    "inline": "html-inline dist/bundled/index.html -o dist/inlined/index.html",
+    "zip": "node bin/zip-file.js && node bin/check-file-size.js",
+    "size": "nodemon --watch dist/bundled --exec \"npm run inline && npm run zip\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "archiver": "^3.1.1",
+    "html-inline": "^1.2.0",
+    "nodemon": "^1.19.1",
+    "parcel-bundler": "^1.12.3",
+    "parcel-plugin-url-loader": "github:mikedevelops/parcel-plugin-url-loader#feature/dev-mode",
+    "pretty-bytes": "^5.3.0",
+    "rollup": "^1.19.4"
+  }
+}

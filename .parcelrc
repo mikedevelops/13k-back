@@ -1,0 +1,7 @@
+{
+  "url-loader": {
+    "exts": ["jpg", "jpeg", "png", "gif", "svg"],
+    "limit": 10240,
+    "dev": true
+  }
+}
