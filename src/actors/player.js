@@ -2,7 +2,7 @@ import { drawSprite, S_PLAYER } from '../sprite/sprites';
 import { getUnit } from '../utils/units';
 import { addVector } from '../utils/vector';
 import { STAGE_CTX } from '../stage/stage';
-import { staticGrid } from '../grid/staticGrid';
+import { Level } from '../grid/level';
 import { entityManager } from '../index';
 
 export const player = {
@@ -49,7 +49,7 @@ export const player = {
     move: function (direction) {
         const position = addVector(this.position, direction);
 
-        if (!staticGrid.canMoveToPosition(position)) {
+        if (!Level.canMoveToPosition(position)) {
             return;
         }
 

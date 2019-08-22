@@ -10,7 +10,7 @@
     "start": "parcel src/index.html",
     "inline": "mkdir -p dist/inlined && html-inline dist/bundled/index.html -o dist/inlined/index.html",
     "zip": "node bin/zip-file.js && node bin/check-file-size.js",
-    "size": "nodemon --watch dist/bundled --exec \"npm run inline && npm run zip\""
+    "size": "concurrently \"npm run watch\" \"nodemon --watch dist/bundled --exec 'npm run inline && npm run zip'\""
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +19,7 @@
     "@babel/preset-env": "^7.5.5",
     "archiver": "^3.1.1",
     "babel-preset-env": "^1.7.0",
+    "concurrently": "^4.1.2",
     "html-inline": "^1.2.0",
     "jest": "^24.9.0",
     "nodemon": "^1.19.1",

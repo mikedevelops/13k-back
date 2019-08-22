@@ -12,11 +12,6 @@ export const drawSprite = (ctx, id, position) => {
 
     const spriteMapPosition = [id * 16, 0];
 
-    if (id === 0) {
-        ctx.fillStyle = '#472d3c';
-        ctx.fillRect(position[0], position[1], UNIT, UNIT);
-        return;
-    }
 
     ctx.drawImage(
         SPRITE_REF,
