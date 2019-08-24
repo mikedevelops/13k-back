@@ -1,4 +1,5 @@
 import { tile } from './tile';
+import { S_POT, S_WALL } from '../sprite/sprites';
 
 export const createLevel = () => ({
     resolution: [4, 4],
@@ -35,16 +36,33 @@ export const createLevel = () => ({
      * Get entity at position in the grid
      * @param x
      * @param y
-     * @return {number}
+     * @return {null|number}
      */
     getEntityAt: function ([x, y]) {
         const entities = this.getEntitiesAt([x, y]);
 
+        if (entities === null) {
+            return null;
+        }
+
         return entities[entities.length - 1];
     },
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {number[]|null}
+     */
     getEntitiesAt: function ([x, y]) {
-        const entity = this.currentState[(y * this.resolution[1]) + x];
+        const entity = this.currentState[x][y];
+
+        if (this.currentState[x] === undefined) {
+            return null;
+        }
+
+        if (this.currentState[x][y] === undefined) {
+            return null;
+        }
 
         if (!Array.isArray(entity)) {
             return [entity];
@@ -60,9 +78,15 @@ export const createLevel = () => ({
      * @return {boolean}
      */
     canMoveToPosition: function ([x, y]) {
-        switch (this.getEntityAt([x, y])) {
-            case 1:
-            case 4:
+        const entity = this.getEntityAt([x, y]);
+
+        if (entity === null) {
+            return false;
+        }
+
+        switch (entity.entities[0]) {
+            case S_WALL:
+            case S_POT:
                 return false;
             default:
                 return true;

@@ -1,9 +1,7 @@
-import { drawSprite, S_PLAYER } from '../sprite/sprites';
+import { drawSprite, PLAYER_SPRITE_MAP } from '../sprite/sprites';
 import { getUnit } from '../utils/units';
-import { addVector } from '../utils/vector';
+import { addVector, equals, V_EAST } from '../utils/vector';
 import { STAGE_CTX } from '../stage/stage';
-import { Level } from '../grid/level';
-import { entityManager } from '../index';
 
 export const player = {
     /**
@@ -22,10 +20,19 @@ export const player = {
     moves: 0,
 
     /**
+     * Player direction
+     */
+    direction: V_EAST,
+
+    /**
      * Draw the player
      */
     draw: function () {
-        drawSprite(STAGE_CTX, S_PLAYER, this.getWorldPosition());
+        drawSprite(
+            STAGE_CTX,
+            PLAYER_SPRITE_MAP[this.direction],
+            this.getWorldPosition()
+        );
     },
 
     /**
@@ -44,19 +51,22 @@ export const player = {
     },
 
     /**
+     * @param {object} level
      * @param {number[]} direction
      */
-    move: function (direction) {
+    move: function (level, direction) {
+        if (!equals(direction, this.direction)) {
+            this.direction = direction;
+            return;
+        }
+
         const position = addVector(this.position, direction);
 
-        if (!Level.canMoveToPosition(position)) {
+        if (!level.canMoveToPosition(position)) {
             return;
         }
 
-        if (entityManager.getEntityAt(position) !== undefined) {
-            return;
-        }
-
+        this.direction = direction;
         this.position = position;
     },
 };

@@ -1,4 +1,4 @@
-import { drawSprite, S_PLAYER } from '../sprite/sprites';
+import { drawSprite, S_PLAYER_E } from '../sprite/sprites';
 import { HIDDEN_CTX, STAGE_CTX } from '../stage/stage';
 import { getUnit } from '../utils/units';
 

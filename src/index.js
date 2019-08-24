@@ -22,8 +22,8 @@ const start = () => {
 
     SPRITE_REF.addEventListener('load', () => {
         level1.load(
-            [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 9, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 9, 1, 1, 1, 1, 1],
         );
         drawBackground(level1);
         update();
@@ -38,10 +38,10 @@ const update = (delta) => {
 
 const input = [];
 
-input[65] = () => player.move(DIRECTION_LEFT);
-input[83] = () => player.move(DIRECTION_DOWN);
-input[87] = () => player.move(DIRECTION_UP);
-input[68] = () => player.move(DIRECTION_RIGHT);
+input[65] = () => player.move(level1, DIRECTION_LEFT);
+input[83] = () => player.move(level1, DIRECTION_DOWN);
+input[87] = () => player.move(level1, DIRECTION_UP);
+input[68] = () => player.move(level1, DIRECTION_RIGHT);
 
 window.addEventListener('keydown', ev => {
     if (input[ev.keyCode] === undefined) {
