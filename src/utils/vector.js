@@ -12,3 +12,4 @@ export const V_NORTH = [0, -1];
 export const V_EAST= [1, 0];
 export const V_SOUTH = [0, 1];
 export const V_WEST = [-1, 0];
+export const V_ZERO = [0, 0];

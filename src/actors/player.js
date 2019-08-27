@@ -3,7 +3,9 @@ import { getUnit } from '../utils/units';
 import { addVector, equals, V_EAST } from '../utils/vector';
 import { STAGE_CTX } from '../stage/stage';
 
-export const player = {
+export const createPlayer = (inventory) => ({
+    inventory: inventory,
+
     /**
      * Player position
      */
@@ -48,6 +50,11 @@ export const player = {
      */
     update: function () {
         this.draw();
+        this.inventory.draw();
+    },
+
+    isFull: function () {
+        return this.item !== null;
     },
 
     /**
@@ -69,4 +76,36 @@ export const player = {
         this.direction = direction;
         this.position = position;
     },
-};
+
+    pickup: function (level) {
+        const itemPosition = addVector(this.position, this.direction);
+        const item = level.getEntityAt(itemPosition);
+
+        if (item === null) {
+            return;
+        }
+
+        if (!item.canPickup()) {
+            return;
+        }
+
+        level.removeEntityAt(itemPosition);
+        this.inventory.addItem(item);
+    },
+
+    place: function (level) {
+        const targetPosition = addVector(this.position, this.direction);
+        const item = inventory.getItem();
+
+        if (!level.canMoveToPosition(targetPosition)) {
+            return;
+        }
+
+        if (item === null) {
+            return;
+        }
+
+        level.addEntityAt(targetPosition, item);
+        this.inventory.removeItem();
+    }
+});

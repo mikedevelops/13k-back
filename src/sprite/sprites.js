@@ -7,12 +7,17 @@ export const SPRITE_REF = document.createElement('img');
 SPRITE_REF.src = sprites;
 
 export const drawSprite = (ctx, id, position) => {
-    if (variations[id] !== undefined) {
-        id = variations[id][randInt(0, variations[id].length - 1)];
+    // FIXME: variants need calculating once not on each draw
+    // if (variations[id] !== undefined) {
+    //     id = variations[id][randInt(0, variations[id].length - 1)];
+    // }
+
+    // TODO: fix this when  the above is fixed
+    if (id === 0) {
+        id = S_GROUND_VARIANT_1;
     }
 
     const spriteMapPosition = [id * 16, 0];
-
 
     ctx.drawImage(
         SPRITE_REF,
@@ -29,6 +34,7 @@ export const drawSprite = (ctx, id, position) => {
 
 export const S_GROUND = 0;
 export const S_WALL = 1;
+export const S_GROUND_VARIANT_1 = 2;
 export const S_PLAYER_E = 3;
 export const S_DOORWAY = 4;
 export const S_SKELETON_REMAINS = 5;
@@ -36,6 +42,7 @@ export const S_PLAYER_W = 6;
 export const S_PLAYER_N = 7;
 export const S_PLAYER_S = 8;
 export const S_POT = 9;
+export const S_INVENTORY_SLOT = 10;
 
 export const PLAYER_SPRITE_MAP = {
     [V_NORTH]: S_PLAYER_N,

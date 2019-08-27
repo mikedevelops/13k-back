@@ -1,5 +1,8 @@
 import { tile } from './tile';
-import { S_POT, S_WALL } from '../sprite/sprites';
+import { drawSprite, S_GROUND, S_POT, S_WALL } from '../sprite/sprites';
+import { createItem } from '../items/item';
+import { hiddenStage, STAGE_CTX } from '../stage/stage';
+import { getUnit } from '../utils/units';
 
 export const createLevel = () => ({
     resolution: [4, 4],
@@ -18,14 +21,22 @@ export const createLevel = () => ({
 
         for(let y = 0; y < this.resolution[1]; y++) {
             for (let x = 0; x < this.resolution[0]; x++) {
+                const id = grid[(y * this.resolution[1]) + x];
+                const position = [x, y];
+                const entities = [];
+
                 if (state[x] === undefined) {
                     state[x] = [];
                 }
 
-                state[x][y] = tile(x, y, grid[(y * this.resolution[1]) + x]);
+                if (id !== S_GROUND) {
+                    entities.push(createItem(S_GROUND, position));
+                }
+
+                entities.push(createItem(id, position));
+                state[x][y] = tile(x, y, entities);
                 column++;
             }
-
             row++;
         }
 
@@ -39,13 +50,19 @@ export const createLevel = () => ({
      * @return {null|number}
      */
     getEntityAt: function ([x, y]) {
-        const entities = this.getEntitiesAt([x, y]);
+        const tile = this.getTileAt([x, y]);
 
-        if (entities === null) {
+        if (tile === null) {
             return null;
         }
 
-        return entities[entities.length - 1];
+        const entity = tile.entities[tile.entities.length - 1];
+
+        if (entity === undefined) {
+            return null;
+        }
+
+        return entity;
     },
 
     /**
@@ -53,8 +70,8 @@ export const createLevel = () => ({
      * @param {number} y
      * @return {number[]|null}
      */
-    getEntitiesAt: function ([x, y]) {
-        const entity = this.currentState[x][y];
+    getTileAt: function ([x, y]) {
+        const tile = this.currentState[x][y];
 
         if (this.currentState[x] === undefined) {
             return null;
@@ -64,11 +81,27 @@ export const createLevel = () => ({
             return null;
         }
 
-        if (!Array.isArray(entity)) {
-            return [entity];
+        return tile;
+    },
+
+    removeEntityAt: function (position) {
+        const tile = this.getTileAt(position);
+
+        if (tile === null) {
+            return null;
         }
 
-        return entity;
+        tile.entities.pop();
+    },
+
+    addEntityAt: function (position, item) {
+        const tile = this.getTileAt(position);
+
+        if (tile === null) {
+            return;
+        }
+
+        tile.entities.push(item);
     },
 
     /**
@@ -84,7 +117,7 @@ export const createLevel = () => ({
             return false;
         }
 
-        switch (entity.entities[0]) {
+        switch (entity.id) {
             case S_WALL:
             case S_POT:
                 return false;
@@ -100,6 +133,23 @@ export const createLevel = () => ({
             }
         }
     },
+
+    draw: function () {
+        STAGE_CTX.fillStyle = '#472d3c';
+        STAGE_CTX.fillRect(0, 0, hiddenStage.width, hiddenStage.height);
+
+        this.iterate(this.currentState, tile => {
+            tile.entities.forEach(item => {
+                drawSprite(
+                    STAGE_CTX,
+                    item.id,
+                    getUnit(tile.position)
+                );
+            });
+        });
+
+        console.log(this.currentState);
+    }
 
     // TODO: win condition method
 });
