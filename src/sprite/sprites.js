@@ -3,8 +3,13 @@ import { UNIT } from '../game/constants';
 import { randInt } from '../utils/units';
 import { V_EAST, V_NORTH, V_SOUTH, V_WEST } from '../utils/vector';
 
+export const SPRITE_SIZE = 16;
 export const SPRITE_REF = document.createElement('img');
 SPRITE_REF.src = sprites;
+
+export const clearSprite = (ctx, position) => {
+    ctx.clearRect(position[0], position[1], SPRITE_SIZE, SPRITE_SIZE);
+};
 
 export const drawSprite = (ctx, id, position) => {
     // FIXME: variants need calculating once not on each draw
@@ -23,8 +28,8 @@ export const drawSprite = (ctx, id, position) => {
         SPRITE_REF,
         spriteMapPosition[0],
         spriteMapPosition[1],
-        16,
-        16,
+        SPRITE_SIZE,
+        SPRITE_SIZE,
         position[0],
         position[1],
         UNIT,
@@ -43,6 +48,10 @@ export const S_PLAYER_N = 7;
 export const S_PLAYER_S = 8;
 export const S_POT = 9;
 export const S_INVENTORY_SLOT = 10;
+export const S_GROUND_TILE = 11;
+export const S_DOORWAY_EXIT = 12;
+
+export const S_ALPHABET = 13;
 
 export const PLAYER_SPRITE_MAP = {
     [V_NORTH]: S_PLAYER_N,

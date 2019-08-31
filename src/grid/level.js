@@ -1,13 +1,18 @@
-import { tile } from './tile';
-import { drawSprite, S_GROUND, S_POT, S_WALL } from '../sprite/sprites';
-import { createItem } from '../items/item';
-import { hiddenStage, STAGE_CTX } from '../stage/stage';
-import { getUnit } from '../utils/units';
+import {tile} from './tile';
+import {drawSprite, S_DOORWAY, S_DOORWAY_EXIT, S_GROUND, S_GROUND_TILE, S_POT, S_WALL} from '../sprite/sprites';
+import {createItem} from '../items/item';
+import {hiddenStage, stage, STAGE_CTX} from '../stage/stage';
+import {getUnit} from '../utils/units';
+import {entityArraysEqual} from "../utils/entities";
 
 export const createLevel = () => ({
     resolution: [4, 4],
     currentState: null,
     cachedState: null,
+    countdown: 1,
+    active: false,
+    exitPosition: null,
+    exitOpen: false,
 
     load: function (complete, start) {
         this.cachedState = this.createState(complete);
@@ -24,16 +29,31 @@ export const createLevel = () => ({
                 const id = grid[(y * this.resolution[1]) + x];
                 const position = [x, y];
                 const entities = [];
+                const bottomTile = Array.isArray(id) ? id[0] : id;
+                const topTile = Array.isArray(id) ? id[id.length - 1] : id;
 
                 if (state[x] === undefined) {
                     state[x] = [];
                 }
 
-                if (id !== S_GROUND) {
+                switch (bottomTile) {
+                  case S_GROUND:
+                  case S_GROUND_TILE:
+                    break;
+                  default:
                     entities.push(createItem(S_GROUND, position));
                 }
 
-                entities.push(createItem(id, position));
+                if (topTile === S_DOORWAY) {
+                    this.exitPosition = position;
+                }
+
+                if (Array.isArray(id)) {
+                  id.forEach(i => entities.push(createItem(i, position)))
+                } else {
+                  entities.push(createItem(id, position));
+                }
+
                 state[x][y] = tile(x, y, entities);
                 column++;
             }
@@ -68,16 +88,17 @@ export const createLevel = () => ({
     /**
      * @param {number} x
      * @param {number} y
+     * @param state
      * @return {number[]|null}
      */
-    getTileAt: function ([x, y]) {
-        const tile = this.currentState[x][y];
+    getTileAt: function ([x, y], state = this.currentState) {
+        const tile = state[x][y];
 
-        if (this.currentState[x] === undefined) {
+        if (state[x] === undefined) {
             return null;
         }
 
-        if (this.currentState[x][y] === undefined) {
+        if (state[x][y] === undefined) {
             return null;
         }
 
@@ -104,6 +125,16 @@ export const createLevel = () => ({
         tile.entities.push(item);
     },
 
+    replaceEntityAt: function (position, entity) {
+        const tile = this.getTileAt(position);
+
+        if (tile === null) {
+            return null;
+        }
+
+        tile.entities[tile.entities.length - 1] = entity;
+    },
+
     /**
      * Can we move to this tile
      * @param x
@@ -120,6 +151,7 @@ export const createLevel = () => ({
         switch (entity.id) {
             case S_WALL:
             case S_POT:
+            case S_DOORWAY:
                 return false;
             default:
                 return true;
@@ -134,11 +166,11 @@ export const createLevel = () => ({
         }
     },
 
-    draw: function () {
+    draw: function (state = this.currentState) {
         STAGE_CTX.fillStyle = '#472d3c';
         STAGE_CTX.fillRect(0, 0, hiddenStage.width, hiddenStage.height);
 
-        this.iterate(this.currentState, tile => {
+        this.iterate(state, tile => {
             tile.entities.forEach(item => {
                 drawSprite(
                     STAGE_CTX,
@@ -147,8 +179,77 @@ export const createLevel = () => ({
                 );
             });
         });
+    },
 
-        console.log(this.currentState);
+    start: function () {
+        this.draw(this.cachedState);
+
+        const interval = setInterval(() => {
+            if (this.countdown === 0) {
+                const event = new CustomEvent('start');
+
+                clearInterval(interval);
+                this.active = true;
+                this.draw(this.currentState);
+                stage.dispatchEvent(event);
+                return;
+            }
+
+            const event = new CustomEvent('countdown');
+            event.data = this.countdown;
+            stage.dispatchEvent(event);
+            this.countdown--;
+        }, 1000);
+    },
+
+    update: function () {
+        this.draw(this.currentState)
+    },
+
+    isComplete: function () {
+        let complete = true;
+
+        this.iterate(this.currentState, tile => {
+            if (!complete) {
+                return;
+            }
+
+            const cachedTile = this.getTileAt(tile.position, this.cachedState);
+
+            if (!entityArraysEqual(cachedTile.entities, tile.entities)) {
+                complete = false;
+            }
+        });
+
+        return complete;
+    },
+
+    complete: function () {
+        if (this.exitOpen) {
+            return;
+        }
+
+        const exit = createItem(S_DOORWAY_EXIT, this.exitPosition);
+
+        this.replaceEntityAt(exit.position, exit);
+        this.exitOpen = true;
+
+        const event = new CustomEvent('open_exit');
+        stage.dispatchEvent(event);
+    },
+
+    inComplete: function () {
+        if (!this.exitOpen) {
+            return;
+        }
+
+        const exit = createItem(S_DOORWAY, this.exitPosition);
+
+        this.replaceEntityAt(exit.position, exit);
+        this.exitOpen = false;
+
+        const event = new CustomEvent('close_exit');
+        stage.dispatchEvent(event);
     }
 
     // TODO: win condition method

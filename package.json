@@ -10,7 +10,8 @@
     "start": "parcel src/index.html",
     "inline": "mkdir -p dist/inlined && html-inline dist/bundled/index.html -o dist/inlined/index.html",
     "zip": "node bin/zip-file.js && node bin/check-file-size.js",
-    "size": "concurrently \"npm run watch\" \"nodemon --watch dist/bundled --exec 'npm run inline && npm run zip'\""
+    "size": "concurrently \"npm run watch\" \"nodemon --watch dist/bundled --exec 'npm run inline && npm run zip'\"",
+    "deploy": "git push origin :gh-pages && git subtree push --prefix dist/inlined origin gh-pages"
   },
   "author": "",
   "license": "ISC",

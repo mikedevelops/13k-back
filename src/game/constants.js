@@ -5,3 +5,4 @@ export const DIRECTION_RIGHT = [1, 0];
 
 export const UNIT = 16;
 export const RESOLUTION = [16, 9];
+export const LEVEL_PADDING = [1, 1];

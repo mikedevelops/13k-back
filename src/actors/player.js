@@ -1,30 +1,33 @@
-import { drawSprite, PLAYER_SPRITE_MAP } from '../sprite/sprites';
+import {clearSprite, drawSprite, PLAYER_SPRITE_MAP} from '../sprite/sprites';
 import { getUnit } from '../utils/units';
 import { addVector, equals, V_EAST } from '../utils/vector';
 import { STAGE_CTX } from '../stage/stage';
 
 export const createPlayer = (inventory) => ({
+    /**
+     * Player inventory
+     */
     inventory: inventory,
-
     /**
      * Player position
      */
     position: [0, 5],
-
     /**
      * Player's origin
      */
     origin: [0, 5],
-
     /**
      * Player move count
      */
     moves: 0,
-
     /**
      * Player direction
      */
     direction: V_EAST,
+    /**
+     * Should the player be hidden
+     */
+    hide: false,
 
     /**
      * Draw the player
@@ -49,8 +52,8 @@ export const createPlayer = (inventory) => ({
      * Update the player
      */
     update: function () {
-        this.draw();
         this.inventory.draw();
+        this.draw();
     },
 
     isFull: function () {
@@ -107,5 +110,5 @@ export const createPlayer = (inventory) => ({
 
         level.addEntityAt(targetPosition, item);
         this.inventory.removeItem();
-    }
+    },
 });
