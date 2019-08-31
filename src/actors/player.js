@@ -1,4 +1,4 @@
-import {clearSprite, drawSprite, PLAYER_SPRITE_MAP} from '../sprite/sprites';
+import {clearSprite, drawSprite, PLAYER_SPRITE_MAP, S_DOORWAY_EXIT} from '../sprite/sprites';
 import { getUnit } from '../utils/units';
 import { addVector, equals, V_EAST } from '../utils/vector';
 import { STAGE_CTX } from '../stage/stage';
@@ -51,7 +51,8 @@ export const createPlayer = (inventory) => ({
     /**
      * Update the player
      */
-    update: function () {
+    update: function (position = this.position) {
+        this.position = position;
         this.inventory.draw();
         this.draw();
     },
@@ -76,8 +77,15 @@ export const createPlayer = (inventory) => ({
             return;
         }
 
+        const entity = level.getEntityAt(position);
+
         this.direction = direction;
         this.position = position;
+
+        if (entity.id === S_DOORWAY_EXIT) {
+            const event = new CustomEvent('player_exit');
+            stage.dispatchEvent(event);
+        }
     },
 
     pickup: function (level) {

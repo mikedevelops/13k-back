@@ -1,7 +1,6 @@
 import sprites from '../../assets/sprites.png';
-import { UNIT } from '../game/constants';
-import { randInt } from '../utils/units';
-import { V_EAST, V_NORTH, V_SOUTH, V_WEST } from '../utils/vector';
+import {UNIT} from '../game/constants';
+import {V_EAST, V_NORTH, V_SOUTH, V_WEST} from '../utils/vector';
 
 export const SPRITE_SIZE = 16;
 export const SPRITE_REF = document.createElement('img');
@@ -50,8 +49,10 @@ export const S_POT = 9;
 export const S_INVENTORY_SLOT = 10;
 export const S_GROUND_TILE = 11;
 export const S_DOORWAY_EXIT = 12;
+export const S_TROPHY = 23;
+export const S_TROPHY_COMPLETE = 24;
 
-export const S_ALPHABET = 13;
+export const S_NUMBERS = 13;
 
 export const PLAYER_SPRITE_MAP = {
     [V_NORTH]: S_PLAYER_N,

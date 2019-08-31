@@ -1,7 +1,7 @@
 import {tile} from './tile';
 import {drawSprite, S_DOORWAY, S_DOORWAY_EXIT, S_GROUND, S_GROUND_TILE, S_POT, S_WALL} from '../sprite/sprites';
 import {createItem} from '../items/item';
-import {hiddenStage, stage, STAGE_CTX} from '../stage/stage';
+import {stage, STAGE_CTX} from '../stage/stage';
 import {getUnit} from '../utils/units';
 import {entityArraysEqual} from "../utils/entities";
 
@@ -13,10 +13,20 @@ export const createLevel = () => ({
     active: false,
     exitPosition: null,
     exitOpen: false,
+    finished: false,
+    playerStartPosition: null,
+    cachedStartState: null,
 
-    load: function (complete, start) {
+    reset: function () {
+        this.currentState = this.cachedStartState;
+        this.exitOpen = false;
+    },
+
+    load: function (complete, start, player) {
         this.cachedState = this.createState(complete);
+        this.cachedStartState = this.createState(start);
         this.currentState = this.createState(start);
+        this.playerStartPosition = player;
     },
 
     createState: function (grid) {
@@ -167,8 +177,6 @@ export const createLevel = () => ({
     },
 
     draw: function (state = this.currentState) {
-        STAGE_CTX.fillStyle = '#472d3c';
-        STAGE_CTX.fillRect(0, 0, hiddenStage.width, hiddenStage.height);
 
         this.iterate(state, tile => {
             tile.entities.forEach(item => {
@@ -181,7 +189,7 @@ export const createLevel = () => ({
         });
     },
 
-    start: function () {
+    intro: function () {
         this.draw(this.cachedState);
 
         const interval = setInterval(() => {
@@ -190,7 +198,6 @@ export const createLevel = () => ({
 
                 clearInterval(interval);
                 this.active = true;
-                this.draw(this.currentState);
                 stage.dispatchEvent(event);
                 return;
             }
