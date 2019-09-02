@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf dist/bundled && parcel build src/index.html -d dist/bundled --no-source-maps",
     "watch": "nodemon --watch src --exec \"npm run build\"",
-    "intro": "parcel src/index.html",
+    "start": "parcel src/index.html",
     "inline": "mkdir -p dist/inlined && html-inline dist/bundled/index.html -o dist/inlined/index.html",
     "zip": "node bin/zip-file.js",
     "size": "npm run build && npm run inline && node bin/check-file-size.js",

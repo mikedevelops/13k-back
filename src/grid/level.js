@@ -4,9 +4,11 @@ import {createItem} from '../items/item';
 import {stage, STAGE_CTX} from '../stage/stage';
 import {getUnit} from '../utils/units';
 import {entityArraysEqual} from "../utils/entities";
+import {GAME_STATE} from "../index";
+import {LEVEL_INTRO, LEVEL_REVEAL} from "../game/constants";
 
 export const createLevel = () => ({
-    resolution: [4, 4],
+    resolution: null,
     currentState: null,
     cachedState: null,
     countdown: 1,
@@ -15,18 +17,30 @@ export const createLevel = () => ({
     exitOpen: false,
     finished: false,
     playerStartPosition: null,
+    heroStartPosition: null,
     cachedStartState: null,
+    instructions: [],
+    instructionIndex: 0,
+    introState: null,
+    cachedIntroState: null,
 
     reset: function () {
         this.currentState = this.cachedStartState;
+        this.introState = this.cachedIntroState;
         this.exitOpen = false;
+        this.instructionIndex = 0;
     },
 
-    load: function (complete, start, player) {
+    load: function (complete, start, player, resolution, instructions, intro, hero) {
+        this.resolution = resolution;
+        this.introState = this.createState(intro);
+        this.cachedIntroState = this.createState(intro);
         this.cachedState = this.createState(complete);
         this.cachedStartState = this.createState(start);
         this.currentState = this.createState(start);
         this.playerStartPosition = player;
+        this.instructions = instructions;
+        this.heroStartPosition = hero;
     },
 
     createState: function (grid) {
@@ -101,7 +115,16 @@ export const createLevel = () => ({
      * @param state
      * @return {number[]|null}
      */
-    getTileAt: function ([x, y], state = this.currentState) {
+    getTileAt: function ([x, y]) {
+        let state = this.currentState;
+
+        switch (GAME_STATE) {
+            case LEVEL_REVEAL:
+            case LEVEL_INTRO:
+                state = this.introState;
+                break;
+        }
+
         const tile = state[x][y];
 
         if (state[x] === undefined) {
@@ -189,12 +212,12 @@ export const createLevel = () => ({
         });
     },
 
-    intro: function () {
+    reveal: function () {
         this.draw(this.cachedState);
 
         const interval = setInterval(() => {
             if (this.countdown === 0) {
-                const event = new CustomEvent('start');
+                const event = new CustomEvent('reveal_finished');
 
                 clearInterval(interval);
                 this.active = true;
@@ -209,8 +232,8 @@ export const createLevel = () => ({
         }, 1000);
     },
 
-    update: function () {
-        this.draw(this.currentState)
+    update: function (state = this.currentState) {
+        this.draw(state);
     },
 
     isComplete: function () {
@@ -257,7 +280,17 @@ export const createLevel = () => ({
 
         const event = new CustomEvent('close_exit');
         stage.dispatchEvent(event);
-    }
+    },
 
-    // TODO: win condition method
+    getNextInstruction: function () {
+        const instruction = this.instructions[this.instructionIndex];
+
+        if (instruction === undefined) {
+            return null;
+        }
+
+        this.instructionIndex++;
+
+        return instruction;
+    },
 });

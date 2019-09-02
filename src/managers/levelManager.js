@@ -8,17 +8,25 @@ export const levelManager = () => ({
     highlighted: 0,
 
     load: function (levels) {
-        levels.forEach(({ start, complete, player }) => {
+        levels.forEach((level) => {
             const thisLevel = createLevel();
 
-            thisLevel.load(complete, start, player);
+            thisLevel.load(
+                level.complete,
+                level.start,
+                level.player,
+                level.resolution,
+                level.instructions,
+                level.intro,
+                level.hero,
+            );
+
             this.levels.push(thisLevel);
         });
     },
 
     draw: function () {
         for (let i = 0; i < this.levels.length; i++) {
-            console.log(this.levels[i]);
             drawSprite(STAGE_CTX, S_NUMBERS + i, [getUnit(i), 0]);
             drawSprite(
                 STAGE_CTX,

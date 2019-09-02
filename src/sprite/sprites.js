@@ -39,20 +39,31 @@ export const drawSprite = (ctx, id, position) => {
 export const S_GROUND = 0;
 export const S_WALL = 1;
 export const S_GROUND_VARIANT_1 = 2;
-export const S_PLAYER_E = 3;
+export const S_HERO_E = 3;
 export const S_DOORWAY = 4;
 export const S_SKELETON_REMAINS = 5;
-export const S_PLAYER_W = 6;
-export const S_PLAYER_N = 7;
-export const S_PLAYER_S = 8;
+export const S_HERO_W = 6;
+export const S_HERO_N = 7;
+export const S_HERO_S = 8;
 export const S_POT = 9;
 export const S_INVENTORY_SLOT = 10;
 export const S_GROUND_TILE = 11;
 export const S_DOORWAY_EXIT = 12;
 export const S_TROPHY = 23;
 export const S_TROPHY_COMPLETE = 24;
+export const S_PLAYER_E = 25;
+export const S_PLAYER_W = 26;
+export const S_PLAYER_S = 27;
+export const S_PLAYER_N = 28;
 
 export const S_NUMBERS = 13;
+
+export const HERO_SPRITE_MAP = {
+    [V_NORTH]: S_HERO_N,
+    [V_EAST]: S_HERO_E,
+    [V_SOUTH]: S_HERO_S,
+    [V_WEST]: S_HERO_W
+};
 
 export const PLAYER_SPRITE_MAP = {
     [V_NORTH]: S_PLAYER_N,

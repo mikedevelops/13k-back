@@ -8,6 +8,7 @@ export const RESOLUTION = [16, 9];
 export const LEVEL_PADDING = [1, 1];
 
 export const LEVEL_SELECT = 'LEVEL_SELECT';
+export const LEVEL_REVEAL = 'LEVEL_REVEAL';
 export const LEVEL_INTRO = 'LEVEL_INTRO';
 export const LEVEL_START = 'LEVEL_START';
 export const LEVEL_ACTIVE = 'LEVEL_ACTIVE';
